@@ -117,17 +117,13 @@ class MinHeap {
 
     while (true) {
       const leftChildIndex = this.getLeftChildIndex(currentIndex);
-
-      if (leftChildIndex >= this.heap.length) break;
-
       const rightChildIndex = this.getRightChildIndex(currentIndex);
       let smallerChildIndex;
 
+      if (leftChildIndex >= this.heap.length) break;
+
       if (rightChildIndex < this.heap.length) {
-        smallerChildIndex =
-          this.heap[leftChildIndex][1] < this.heap[rightChildIndex][1]
-            ? leftChildIndex
-            : rightChildIndex;
+        smallerChildIndex = this.heap[leftChildIndex][1] < this.heap[rightChildIndex][1] ? leftChildIndex : rightChildIndex;
       } else {
         smallerChildIndex = leftChildIndex;
       }
