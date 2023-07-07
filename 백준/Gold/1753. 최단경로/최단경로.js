@@ -40,12 +40,12 @@ function dijkstra(list, start, V) {
         if (visited[vertex] || !vertex) continue;
         else visited[vertex] = true;
 
-        for(let i=0 ; i<list[vertex].length ; i++) {
+        for(let i=0 ; i<list[vertex].length ; i++) { // 연결된 정점 확인
             const [arrive, weight] = list[vertex][i];
 
-            if(distance[arrive] > distance[vertex] + weight) {
-              distance[arrive] = distance[vertex] + weight;
-              priorityQueue.insert([arrive, distance[arrive]]);
+            if(distance[arrive] > distance[vertex] + weight) { // 기존 최단경로가 현재 경로를 통해 갱신된 거리보다 크다면 새로 갱신
+              distance[arrive] = distance[vertex] + weight; // 연결된 경로의 최단경로를 현재 방문중인 정점의 최단경로 + 연결된 경로의 가중치
+              priorityQueue.insert([arrive, distance[arrive]]); // 우선순위에 정점과 최단경로를 삽입
             }
         }
     }
