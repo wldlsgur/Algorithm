@@ -5,49 +5,38 @@ const inputs = [];
 rl.on("line", (input) => {
   inputs.push(input.trim());
 }).on("close", () => {
-  const [V, E] = inputs[0].split(" ").map(Number);
-  const Cost = inputs.slice(1).map(value => value.split(" ").map(Number));
+  const N = Number(inputs[0]);
+  const words = inputs.slice(1);
 
-  solution(V, E, Cost);
+  solution(N, words);
 })
 
-function solution(V, _, Cost) {
-  const sortedCost = Cost.sort((a, b) => a[2] - b[2]); // 최소 가중치 부터 연결하기 위한 오름차순 정렬
-  const parent = Array.from({length : V + 1}, (_, index) => index); // 부모 노드를 담기위한 배열
+function solution(N, words) {
+  const alphabetNumber = {}; // 알바펫 마다 자리수 크기를 저장하는 객체
 
-  let result = 0;
-  sortedCost.forEach(cost => {
-    const [A, B, C] = cost;
+  words.forEach(word => {
+    let size = 1; // 첫 단어는 길이가 1 -> 10 -> 100 ...
 
-    // 만약 A, B를 연결할때 사이클이 발생하지 않는다면
-    if(!isSycle(parent, A, B)) {
-      result += C; // 결과 값에 가중치를 더하고
-      union(parent, A, B); // A, B를 연결한다.
+    //단어 맨 왼쪽 부터 검사
+    for(let i=word.length - 1 ; i>=0 ; i--) {
+      const alpabet = word[i]; // 첫 단어
+
+      if(alphabetNumber[alpabet]) { // 이미 단어가 있다면 더해준다.
+        alphabetNumber[alpabet] += size;
+      }
+      else { // 처음 나온 단어면 초기값을 넣어준다.
+        alphabetNumber[alpabet] = size;
+      }
+
+      size = size * 10; // 다음 자리수 크기 설정
     }
   });
 
+  const entriesArray = Object.entries(alphabetNumber).sort((a, b) => b[1] - a[1]); // 객체를 배열로 만들고 value 기준으로 내림차순 정렬
+  let count = 9; // 큰 수부터 9를 곱하면서 내려간다.
+  let result = 0;
+
+  entriesArray.forEach(value => result += value[1] * count--);
+
   console.log(result);
-}
-
-// 최상위 부모노드를 찾는 함수
-function findParent(parent, node) {
-  if(parent[node] === node) return node;
-  return findParent(parent, parent[node]);
-}
-
-// 두 노드의 최상위 노드를 찾고 연결 후 부모를 합치는 함수
-function union(parent, node1, node2) {
-  const parent1 = findParent(parent, node1);
-  const parent2 = findParent(parent, node2);
-
-  if(parent1 < parent2) parent[parent2] = parent1;
-  else parent[parent1] = parent2;
-}
-
-// 두 노드에 대한 부모가 같다면 사이클이 발생을 확인하는 함수
-function isSycle(parent, node1, node2) {
-  const parent1 = findParent(parent, node1);
-  const parent2 = findParent(parent, node2);
-
-  return parent1 === parent2;
 }

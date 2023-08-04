@@ -1,13 +1,22 @@
-﻿const [V, E] = [3, 3];
+﻿/*const V = 3;
 const Cost = [
     [1, 2, 1],
     [2, 3, 2],
     [1, 3, 3]
-]
+]*/
+const V = 5;
+const Cost = [
+  [1, 2, 9],
+  [1, 3, 75],
+  [2, 3, 95],
+  [2, 5, 42],
+  [3, 4, 51],
+  [3, 5, 66],
+];
 
-solution(V, E, Cost);
+solution(V, Cost);
 
-function solution(V, _, Cost) {
+function solution(V, Cost) {
   const sortedCost = Cost.sort((a, b) => a[2] - b[2]); // 최소 가중치 부터 연결하기 위한 오름차순 정렬
   const parent = Array.from({ length: V + 1 }, (_, index) => index); // 부모 노드를 담기위한 배열
 
