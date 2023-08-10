@@ -1,42 +1,45 @@
-const readline = require("readline");
-const rl = readline.createInterface(process.stdin, process.stdout);
-const inputs = [];
+function solution(park, routes) {
+    const yLength = park.length;
+    const xLength = park[0].length;
+    const startPoitn = [];
 
-rl.on("line", (input) => {
-  inputs.push(input.trim());
-}).on("close", () => {
-  const N = Number(inputs[0]);
-  const words = inputs.slice(1);
+    for(let i=0 ; i<yLength ; i++) {
+        if(park[i].includes("S")) {
+            startPoitn.push([i, park[i].indexOf("S")]);
+            break;
+        }
+    };
 
-  solution(N, words);
-})
+    for(let i=0 ; i<routes.length ; i++) {
+        const [y, x] = startPoitn[0];
+        const [direction, distance] = routes[i].split(" ");
+        let newX = x;
+        let newY = y;
 
-function solution(N, words) {
-  const alphabetNumber = {}; // 알바펫 마다 자리수 크기를 저장하는 객체
+        switch(direction) {
+            case "E" :
+                newX += Number(distance);;
+                break;
+            case "W" :
+                newX -= Number(distance);;
+                break;
+            case "N" :
+                newY -= Number(distance);
+                break;
+            case "S" :
+                newY += Number(distance);
+                break;
+        }
 
-  words.forEach(word => {
-    let size = 1; // 첫 단어는 길이가 1 -> 10 -> 100 ...
+        if(newX < 0 || newX >= xLength || newY < 0 || newY >= yLength) continue;
+        if(park[newY][newX] === "X") continue;
 
-    //단어 맨 왼쪽 부터 검사
-    for(let i=word.length - 1 ; i>=0 ; i--) {
-      const alpabet = word[i]; // 첫 단어
-
-      if(alphabetNumber[alpabet]) { // 이미 단어가 있다면 더해준다.
-        alphabetNumber[alpabet] += size;
-      }
-      else { // 처음 나온 단어면 초기값을 넣어준다.
-        alphabetNumber[alpabet] = size;
-      }
-
-      size = size * 10; // 다음 자리수 크기 설정
+        startPoitn[0] = [newY, newX];
     }
-  });
-
-  const entriesArray = Object.entries(alphabetNumber).sort((a, b) => b[1] - a[1]); // 객체를 배열로 만들고 value 기준으로 내림차순 정렬
-  let count = 9; // 큰 수부터 9를 곱하면서 내려간다.
-  let result = 0;
-
-  entriesArray.forEach(value => result += value[1] * count--);
-
-  console.log(result);
+    console.log(startPoitn[0])
+    return startPoitn[0];
 }
+
+// solution(["SOO", "OOO", "OOO"], ["E 2", "S 2", "W 1"]); // [2, 1]
+solution(["SOO","OXX","OOO"],	["E 2","S 2","W 1"]); // [0, 1]
+// solution(["OSO","OOO","OXO","OOO"],	["E 2","S 3","W 1"]) // [0, 0]
