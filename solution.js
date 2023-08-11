@@ -1,44 +1,34 @@
-function solution(park, routes) {
-    const yLength = park.length;
-    const xLength = park[0].length;
-    let startPoitn ;
-
-    for(let i=0 ; i<yLength ; i++) {
-        if(park[i].includes("S")) {
-            startPoitn = [i, park[i].indexOf("S")];
-            break;
-        }
-    };
-
-    outLoof : for(let i=0 ; i<routes.length ; i++) {
-        const [y, x] = startPoitn;
-        const [direction, distance] = routes[i].split(" ");
-        let newX = x;
-        let newY = y;
-
-        for(let j=0 ; j<Number(distance) ; j++) {
-            switch(direction) {
-                case "E" :
-                    newX++;
-                    break;
-                case "W" :
-                    newX--
-                    break;
-                case "N" :
-                    newY--;
-                    break;
-                case "S" :
-                    newY++;
-                    break;
-            }
-            if(newX < 0 || newX >= xLength || newY < 0 || newY >= yLength) continue outLoof;
-            if(park[newY][newX] === "X") continue outLoof;
-        }
-        startPoitn = [newY, newX];
-    }
-    return startPoitn;
+function solution(name, yearning, photo) {
+    
 }
 
-// solution(["SOO", "OOO", "OOO"], ["E 2", "S 2", "W 1"]); // [2, 1]
-// solution(["SOO","OXX","OOO"],	["E 2","S 2","W 1"]); // [0, 1]
-// solution(["OSO","OOO","OXO","OOO"],	["E 2","S 3","W 1"]) // [0, 0]
+console.log(solution(
+    ["may", "kein", "kain", "radi"],
+    [(5, 10, 1, 3)],
+    [
+      (["may", "kein", "kain", "radi"],
+      ["may", "kein", "brin", "deny"],
+      ["kon", "kain", "may", "coni"])
+    ]
+  )
+) // [(19, 15, 6)]
+console.log(solution(
+    [("kali", "mari", "don")],
+    [(11, 1, 55)],
+    [
+      (["kali", "mari", "don"],
+      ["pony", "tom", "teddy"],
+      ["con", "mona", "don"])
+    ]
+  )
+) // [(67, 0, 55)]
+console.log(solution(
+    [("may", "kein", "kain", "radi")],
+    [(5, 10, 1, 3)],
+    [
+      (["may"], 
+      ["kein", "deny", "may"], 
+      ["kon", "coni"])
+    ]
+  )
+) // [(5, 15, 0)];
