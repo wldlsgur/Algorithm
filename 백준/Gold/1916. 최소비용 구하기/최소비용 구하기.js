@@ -14,13 +14,14 @@ rl.on("line", (input) => {
 })
 
 function solution(N, M, busInfo, startPoint, arrivePoint) {
-  const distance = new Array(N + 1).fill(Infinity);
+  const distance = new Array(N + 1).fill(Infinity); // 최소 거리 배열
   const list = {};
 
+  //리스트 초기화
   for(let i=1 ; i<=N ; i++) {
     list[i] = [];
   }
-
+  // 리스트 초기화
   for(const [start, arrive, cost] of busInfo) {
     list[start].push([arrive, cost]);
   }
@@ -28,22 +29,24 @@ function solution(N, M, busInfo, startPoint, arrivePoint) {
   dijkstra(N, distance, list, startPoint);
   console.log(distance[arrivePoint]);
 }
-
+// 다익스트라 알고리즘 함수
 function dijkstra(N, distance, list, startPoint) {
-  const minHeap = new MinHeap();
-  const visited = new Array(N + 1).fill(false);
+  const minHeap = new MinHeap(); // 최소 힙
+  const visited = new Array(N + 1).fill(false); // 방문 여부 확인 배열
 
-  distance[startPoint] = 0;
-  minHeap.insert([startPoint, 0]);
+  distance[startPoint] = 0; // 시작 노드는 자기 자신 거리 0
+  minHeap.insert([startPoint, 0]); // 최소 힙에 시작 노드, 거리 0 넣기
 
+  // 최소 힙이 빌때까지 반복
   while(!minHeap.isEmpty()) {
-    const [node, weight] = minHeap.getMinWeight();
+    const [node, weight] = minHeap.getMinWeight(); // 최소 힙을 통해 최소 가중치를 가져온다. [정점, 가중치]
 
-    if(visited[node]) continue;
+    if(visited[node]) continue; // 만약 방문한 노드라면 생략
 
-    visited[node] = true;
+    visited[node] = true; // 노드 방문 처리
 
     for(const [arrive, cost] of list[node]) {
+      // 연결된 노드의 현재 최소거리보다 더 작다면 갱신해주며 최소 힙에 넣기
       if(distance[arrive] > distance[node] + cost) {
         distance[arrive] = distance[node] + cost;
         minHeap.insert([arrive, distance[arrive]]);
