@@ -32,9 +32,11 @@ function bfs(start, arrive) {
         continue;
       }
 
+      // 0초의 연산은 큐의 맨 앞에 넣고
       if(next === number * 2) {
         queue.unshift([next, count]);
       }
+      // 1초의 연산은 큐의 마지막에 넣는다.
       else {
         queue.push([next, count + 1]);
       }
