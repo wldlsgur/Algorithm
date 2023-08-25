@@ -12,8 +12,8 @@ rl.on("line", (input) => {
 })
 
 function solution(N, M, X, info) {
-    const listToX = {};
-    const listToN = {};
+    const listToX = {}; // N에서 X까지
+    const listToN = {}; // X에서 N까지
 
     for(let i=1 ; i<=N ; i++) {
         listToX[i] = [];

@@ -26,6 +26,6 @@ function solution(N, info) {
       info[i][j] = Math.max(info[i + 1][j] + info[i][j], info[i + 1][j + 1] + info[i][j]);
     }
   }
-
+  console.log(info);
   console.log(info[0][0]);
 }
