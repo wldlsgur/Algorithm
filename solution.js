@@ -15,11 +15,14 @@ function solution(N, graphInfo) {
     const list = {};
     let result = 0;
 
-    for(let i=1; i<=N ; i++) {
-        list[i] = [];
-    }
-
     for(const [start, arrive, cost] of graphInfo) {
+        if(!list[start]) {
+            list[start] = [];
+        }
+        if(!list[arrive]) {
+            list[arrive] = [];
+        }
+
         list[start].push([arrive, cost]);
         list[arrive].push([start, cost]);
     }
