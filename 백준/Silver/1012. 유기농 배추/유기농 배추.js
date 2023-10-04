@@ -1,78 +1,65 @@
-const readline = require('readline');
+const readline = require("readline");
 const rl = readline.createInterface(process.stdin, process.stdout);
-
-const upDown = [-1, 1, 0, 0];
-const leftRight = [0, 0, -1, 1];
 const inputs = [];
+const dy = [-1, 1, 0, 0];
+const dx = [0, 0, -1, 1];
 
-rl.on('line', (input) => {
+rl.on("line", (input) => {
     inputs.push(input.trim());
-}).on('close', () => {
-    const testCase = Number(inputs[0]);
-    let inputIdx = 1;
+}).on("close", () => {
+    const testCase = Number(inputs.shift());
 
-    for (let i=0 ; i < testCase ; i++) {
-        const [M, N, K] = inputs[inputIdx].split(' ').map(Number);
-        const array = inputs.slice(inputIdx + 1, inputIdx + 1 + K);
-        inputIdx += K + 1;
-        solution(M, N, K, array);
+    for(let i=0 ; i<testCase ; i++) {
+        const [M, N, K] = inputs.shift().split(" ").map(Number);
+        const G = inputs.splice(0, K).map(value => value.split(" ").map(Number));
+
+        solution(M, N, K, G);
     }
-});
+})
 
-function solution(M, N, K, array) {
-    const matrix = createMatrix(N, M);
-    const visited = createMatrix(N, M);
+function solution(M, N, K, G) {
+    const matrix = Array.from({length : N}, () => new Array(M).fill(0));
+    const visited = Array.from({length : N} ,() => new Array(M).fill(false));
     let result = 0;
 
-    for (let i=0 ; i < K ; i++) {
-        const [x, y] = array[i].split(' ').map(value => Number(value));
-        addVertex(matrix, x, y);
+    // 배추 심기
+    for(const [x, y] of G) {
+        matrix[y][x] = 1;
     }
 
-    for (let i=0 ; i < N ; i++) {
-        for (let j=0 ; j < M ; j++) {
-            if (matrix[i][j] === 1 && !visited[i][j]) {
-                bfs(matrix, visited, i, j, M, N);
-                result++;
+    for(let i=0 ; i<N ; i++) {
+        for(let j=0 ; j<M ; j++) {
+            if(!visited[i][j] && matrix[i][j]) {
+                result += 1;
+                bfs(M, N, matrix, visited, i, j);
             }
         }
     }
+
     console.log(result);
 }
 
-function bfs(matrix, visited, col, row, M, N) {
-    let queue = [];
+function bfs(M, N, matrix, visited, startY, startX) {
+    const queue = [[startY, startX]];
 
-    queue.push([col, row]);
-    visited[col][row] = 1;
+    visited[startY][startX] = true;
 
-    while (queue.length > 0) {
-        const [qCol, qRow] = queue.shift();
+    while(queue.length > 0) {
+        const [y, x] = queue.shift();
 
-        for (let i=0 ; i < 4 ; i++) {
-            const newCol = qCol + upDown[i];
-            const newRow = qRow + leftRight[i];
+        // 상 하 좌 우 탐색
+        for(let i=0 ; i<4 ; i++) {
+            const [newY, newX] = [y + dy[i], x + dx[i]];
 
-            if (newCol < 0 || newCol >= N || newRow < 0 || newRow >= M) continue;
+            // 배열 범위 검사
+            if(newY < 0 || newY >= N || newX < 0 || newX >= M) {
+                continue;
+            }
 
-            if (!visited[newCol][newRow] && matrix[newCol][newRow] === 1) {
-                queue.push([newCol, newRow]);
-                visited[newCol][newRow] = 1;
+            if(matrix[newY][newX] && !visited[newY][newX]) {
+                visited[newY][newX] = true;
+                queue.push([newY, newX]);
             }
         }
     }
-}
-
-function addVertex(matrix, x, y) {
-    matrix[y][x] = 1;
-}
-
-function createMatrix(N, M) {
-    let matrix = new Array(N);
-
-    for (let i=0 ; i < N ; i++) {
-        matrix[i] = new Array(M).fill(0);
-    }
-
-    return matrix;
 }
