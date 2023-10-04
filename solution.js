@@ -1,66 +1,60 @@
 const readline = require("readline");
 const rl = readline.createInterface(process.stdin, process.stdout);
 const inputs = [];
+const dy = [-1, 1, 0, 0, -1, -1, 1, 1];
+const dx = [0, 0, -1, 1, -1, 1, -1, 1];
 
 rl.on("line", (input) => {
     inputs.push(input.trim());
 }).on("close", () => {
-    const [N, M, V] = inputs.shift().split(" ").map(Number);
-    const G = inputs.map(value => value.trim().split(" ").map(Number));
+    while(true) {
+        const [W, H] = inputs.shift().split(" ").map(Number);
 
-    solution(N, M, V, G);
+        if(W === 0 && H === 0) {
+            break;
+        }
+
+        const M = inputs.splice(0, H).map(value => value.split(" ").map(Number));
+
+        solution(W, H, M);
+    }
 })
 
-function solution(N, M, V, G) {
-    const list = {};
-    const visited = new Array(N + 1).fill(false);
-    const result = [[], []];
+function solution(W, H, M) {
+    const visited = Array.from({length : H}, () => new Array(W).fill(false));
+    let result = 0;
 
-    for(let i=1; i<=N ; i++) {
-        list[i] = [];
-    }
-
-    for(const [start, arrive] of G) {
-        list[start].push(arrive);
-        list[arrive].push(start);
-    }
-
-    for(let i=1; i<=N ; i++) {
-        list[i].sort((a, b) => a - b);
-    }
-
-    dfs(list, visited, N, V, result);
-    bfs(list, N, V, result);
-
-    result.map(row => console.log(row.join(" ")));
-}
-
-function dfs(list, visited, N, start, result) {
-    result[0].push(start);
-    visited[start] = true;
-
-    for(const nextNode of list[start]) {
-        if(!visited[nextNode]) {
-            dfs(list, visited, N, nextNode, result);
+    for(let i=0; i<H ; i++) {
+        for(let j=0 ; j<W ; j++) {
+            if(!visited[i][j] && M[i][j]) {
+                result += 1;
+                bfs(M, W, H, visited, i, j);
+            }
         }
     }
+
+    console.log(result);
 }
 
-function bfs(list, N, start, result) {
-    const queue = [start]
-    const visited = new Array(N + 1).fill(false);
+function bfs(M, W, H, visited, startY, startX) {
+    const queue = [[startY, startX]];
 
-    visited[start] = true;
+    visited[startY][startX] = true;
 
     while(queue.length > 0) {
-        const currNode = queue.shift();
+        const [y, x] = queue.shift();
 
-        result[1].push(currNode);
+        for(let i=0 ; i<8 ; i++) {
+            const [newY, newX] = [y + dy[i], x + dx[i]];
 
-        for(const nextNode of list[currNode]) {
-            if(!visited[nextNode]) {
-                visited[nextNode] = true;
-                queue.push(nextNode);
+            // 범위 벗어나면 생략
+            if(newY < 0 || newY >= H || newX < 0 || newX >= W) {
+                continue;
+            }
+
+            if(M[newY][newX] && !visited[newY][newX]) {
+                visited[newY][newX] = true;
+                queue.push([newY, newX]);
             }
         }
     }
