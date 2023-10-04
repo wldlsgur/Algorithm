@@ -5,52 +5,63 @@ const inputs = [];
 rl.on("line", (input) => {
     inputs.push(input.trim());
 }).on("close", () => {
-    const N = Number(inputs.shift());
-    const graphInfo = inputs.map(value => value.split(" ").map(Number));
-    
-    solution(N, graphInfo);
+    const [N, M, V] = inputs.shift().split(" ").map(Number);
+    const G = inputs.map(value => value.trim().split(" ").map(Number));
+
+    solution(N, M, V, G);
 })
 
-function solution(N, graphInfo) {
+function solution(N, M, V, G) {
     const list = {};
-    let result = 0;
+    const visited = new Array(N + 1).fill(false);
+    const result = [[], []];
 
-    for(const [start, arrive, cost] of graphInfo) {
-        if(!list[start]) {
-            list[start] = [];
-        }
-        if(!list[arrive]) {
-            list[arrive] = [];
-        }
-
-        list[start].push([arrive, cost]);
-        list[arrive].push([start, cost]);
+    for(let i=1; i<=N ; i++) {
+        list[i] = [];
     }
 
-    let targetNode = 1;
-    for(let i=0 ; i<2 ; i++) {
-        const max = { node : 0, cost : 0 };
-        const visited = new Array(N + 1).fill(false);
-
-        dfs(max, visited, list, targetNode, 0);
-        targetNode = max.node;
-        result = max.cost;
+    for(const [start, arrive] of G) {
+        list[start].push(arrive);
+        list[arrive].push(start);
     }
-    
-    console.log(result);
+
+    for(let i=1; i<=N ; i++) {
+        list[i].sort((a, b) => a - b);
+    }
+
+    dfs(list, visited, N, V, result);
+    bfs(list, N, V, result);
+
+    result.map(row => console.log(row.join(" ")));
 }
 
-function dfs(max, visited, list, currNode, currCost) {
-    visited[currNode] = true;
+function dfs(list, visited, N, start, result) {
+    result[0].push(start);
+    visited[start] = true;
 
-    if(max.cost < currCost) {
-        max.node = currNode;
-        max.cost = currCost;
-    }
-
-    for(const [nextNode, cost] of list[currNode]) {
+    for(const nextNode of list[start]) {
         if(!visited[nextNode]) {
-            dfs(max, visited, list, nextNode, currCost + cost);
+            dfs(list, visited, N, nextNode, result);
+        }
+    }
+}
+
+function bfs(list, N, start, result) {
+    const queue = [start]
+    const visited = new Array(N + 1).fill(false);
+
+    visited[start] = true;
+
+    while(queue.length > 0) {
+        const currNode = queue.shift();
+
+        result[1].push(currNode);
+
+        for(const nextNode of list[currNode]) {
+            if(!visited[nextNode]) {
+                visited[nextNode] = true;
+                queue.push(nextNode);
+            }
         }
     }
 }

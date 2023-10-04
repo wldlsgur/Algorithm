@@ -1,89 +1,66 @@
-const rl = require("readline").createInterface({
-    input: process.stdin,
-    output: process.stdout,
-})
-
-let graph;
-let dfsResult = [];
-let bfsResult = [];
-let visitedDfs;
-let visitedBfs;
-let inputs = [];
+const readline = require("readline");
+const rl = readline.createInterface(process.stdin, process.stdout);
+const inputs = [];
 
 rl.on("line", (input) => {
-    inputs.push(input);
-
-    if(inputs[0] && inputs.length === Number(inputs[0].split(" ")[1]) + 1){
-        rl.close();
-    }
+    inputs.push(input.trim());
 }).on("close", () => {
-    solution();    
-});
+    const [N, M, V] = inputs.shift().split(" ").map(Number);
+    const G = inputs.map(value => value.trim().split(" ").map(Number));
 
-function solution() {
-    const [N, M, start] = inputs[0].split(" ").map((value) => Number(value)); // N:노드, M:간선, start:시작지점
-    const graphInfo = inputs.slice(1);
-    graph = initGraph(N);
-    visitedDfs = new Array(N + 1).fill(false);
-    visitedBfs = new Array(N + 1).fill(false);
-    
-    for(let i=0 ; i<graphInfo.length ; i++){
-        const [x, y] = graphInfo[i].split(" ").map(value => Number(value));
-        addNode(x, y);
+    solution(N, M, V, G);
+})
+
+function solution(N, M, V, G) {
+    const list = {};
+    const visited = new Array(N + 1).fill(false);
+    const result = [[], []];
+
+    for(let i=1; i<=N ; i++) {
+        list[i] = [];
     }
 
-    for (let key in graph) {
-        graph[key].sort((a, b) => Number(a) - Number(b));
+    for(const [start, arrive] of G) {
+        list[start].push(arrive);
+        list[arrive].push(start);
     }
 
-    dfs(start);
-    console.log(...dfsResult);
+    for(let i=1; i<=N ; i++) {
+        list[i].sort((a, b) => a - b);
+    }
 
-    bfs(start);
-    console.log(...bfsResult);
+    dfs(list, visited, N, V, result);
+    bfs(list, N, V, result);
+
+    result.map(row => console.log(row.join(" ")));
 }
 
-function initGraph(N) { // 그래프 리스트 초기화
-    const graph = {};
+function dfs(list, visited, N, start, result) {
+    result[0].push(start);
+    visited[start] = true;
 
-    for (let i = 1; i <= N; i++) graph[i] = [];
-
-    return graph;
-}
-
-function addNode(x, y) {
-    graph[x].push(y);   
-    graph[y].push(x);
-}
-
-function dfs(start) {
-    visitedDfs[start] = true;
-    dfsResult.push(start);
-
-    for(let i=0 ; i<graph[start].length ; i++){
-        const vertex = graph[start][i];
-
-        if(!visitedDfs[vertex] && graph[vertex]){
-            dfs(vertex);
+    for(const nextNode of list[start]) {
+        if(!visited[nextNode]) {
+            dfs(list, visited, N, nextNode, result);
         }
     }
 }
 
-function bfs(start) {
-    let queue = [];
+function bfs(list, N, start, result) {
+    const queue = [start]
+    const visited = new Array(N + 1).fill(false);
 
-    queue.push(start);
-    visitedBfs[start] = true;
-    bfsResult.push(start);
+    visited[start] = true;
 
-    while(queue[0]){
-        const vertex = queue.shift();
+    while(queue.length > 0) {
+        const currNode = queue.shift();
 
-        for(let i=0 ; i<graph[vertex].length ; i++){
-            if (!visitedBfs[graph[vertex][i]] && graph[vertex][i]) {
-                visitedBfs[graph[vertex][i]] = true;
-                bfsResult.push(graph[vertex][i]);
-                queue.push(graph[vertex][i]);
+        result[1].push(currNode);
+
+        for(const nextNode of list[currNode]) {
+            if(!visited[nextNode]) {
+                visited[nextNode] = true;
+                queue.push(nextNode);
             }
         }
     }
