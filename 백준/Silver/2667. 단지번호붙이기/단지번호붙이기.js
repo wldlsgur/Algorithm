@@ -1,72 +1,60 @@
-const rl = require("readline").createInterface(process.stdin, process.stdout);
-const upDown = [-1, 1, 0, 0];
-const leftRight = [0, 0, -1, 1];
+const rl = require('readline').createInterface(process.stdin, process.stdout);
+const inputs = [];
+const dy = [-1, 1, 0, 0];
+const dx = [0, 0, -1, 1];
 
-let inputs = [];
-let N;
-let matrix;
-let visited;
-let result = [];
+rl.on('line', (input) => {
+    inputs.push(input.trim());
+}).on('close', () => {
+    const N = Number(inputs.shift());
+    const M = inputs.map((value) => value.split('').map(Number));
 
-rl.on("line", (input) => {
-    inputs.push(input);
+    solution(N, M);
+});
 
-    if(inputs[0] && Number(inputs[0]) === inputs.length - 1){
-        rl.close();
-    }
-
-}).on("close", () => {
-    solution();
-})
-
-function solution() {
-    N = Number(inputs[0]);
-    matrix = inputs.slice(1).map((value) => {
-        return value.split("").map(value => Number(value));
-    });
-    visited = new Array(N);
+function solution(N, M) {
+    const visited = Array.from({ length: N }, () => new Array(N).fill(false));
+    const result = [];
 
     for (let i = 0; i < N; i++) {
-      visited[i] = new Array(N).fill(false);
-    }
+        for (let j = 0; j < M[i].length; j++) {
+            const start = M[i][j];
 
-    for(let i=0 ; i<N ; i++){
-        for(let j=0 ; j<matrix[i].length ; j++){
-            const start = matrix[i][j];
-
-            if(start === 1 && !visited[i][j]){
-                bfs(i, j);
+            if (start === 1 && !visited[i][j]) {
+                result.push(bfs(i, j, visited, N, M));
             }
         }
     }
+
     console.log(result.length);
-    result.sort((a, b) => a - b).map(value => console.log(value));
+    result.sort((a, b) => a - b).map((value) => console.log(value));
 }
 
-function bfs(x, y) {
-    let queue = [];
+function bfs(x, y, visited, N, M) {
+    const queue = [[x, y]];
     let count = 0;
 
-    queue.push([x, y]);
     visited[x][y] = true;
     count++;
 
-    while(queue[0]){
-        const [qX, qY] = queue.shift();
+    while (queue[0]) {
+        const [x, y] = queue.shift();
 
-        for(let i=0 ; i<4 ; i++){
-            const length = qX + upDown[i];
-            const width = qY + leftRight[i];
+        for (let i = 0; i < 4; i++) {
+            const newX = x + dx[i];
+            const newY = y + dy[i];
 
-            if(length >= N || length < 0 || width >= N || width < 0) continue;
-
-            if(!visited[length][width] && matrix[length][width] === 1){
-                queue.push([length, width]);
-                visited[length][width] = true;
-                count++;
+            if (newX >= N || newX < 0 || newY >= N || newY < 0) {
+                continue;
             }
 
+            if (!visited[newX][newY] && M[newX][newY] === 1) {
+                queue.push([newX, newY]);
+                visited[newX][newY] = true;
+                count++;
+            }
         }
     }
-    result.push(count);
+
+    return count;
 }
