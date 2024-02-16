@@ -9,7 +9,7 @@ class MaxHeap {
         let currentIndex = this.heap.length - 1;
         let parentIndex = Math.floor(currentIndex / 2);
 
-        while(parentIndex !== 0 && this.heap[parentIndex] < value) {
+        while (parentIndex !== 0 && this.heap[parentIndex] < value) {
             const temp = this.heap[parentIndex];
 
             this.heap[parentIndex] = value;
@@ -27,18 +27,20 @@ class MaxHeap {
 
         let currentIndex = 1;
         let leftIndex = 2;
-        let rightIndex= 3;
+        let rightIndex = 3;
 
-        while(this.heap[currentIndex] < this.heap[leftIndex] || this.heap[currentIndex] < this.heap[rightIndex]) {
-            if(this.heap[leftIndex] < this.heap[rightIndex]) {
+        while (
+            this.heap[currentIndex] < this.heap[leftIndex] ||
+            this.heap[currentIndex] < this.heap[rightIndex]
+        ) {
+            if (this.heap[leftIndex] < this.heap[rightIndex]) {
                 const temp = this.heap[currentIndex];
 
                 this.heap[currentIndex] = this.heap[rightIndex];
                 this.heap[rightIndex] = temp;
 
                 currentIndex = rightIndex;
-            }
-            else {
+            } else {
                 const temp = this.heap[currentIndex];
 
                 this.heap[currentIndex] = this.heap[leftIndex];
@@ -46,9 +48,9 @@ class MaxHeap {
                 currentIndex = leftIndex;
             }
             leftIndex = currentIndex * 2;
-            rightIndex = currentIndex * 2 + 1;            
+            rightIndex = currentIndex * 2 + 1;
         }
-        
+
         return returnValue;
     }
 }
