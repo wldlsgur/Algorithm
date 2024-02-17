@@ -1,46 +1,27 @@
 const inputs = [];
 require('readline')
   .createInterface(process.stdin, process.stdout)
-  .on('line', line => {
+  .on('line', (line) => {
     inputs.push(line.trim());
   })
   .on('close', () => {
-    const [N, M] = inputs.shift().split(' ').map(Number);
-    const numbers = inputs.shift().split(' ').map(Number);
+    const N = parseInt(inputs.shift(), 10);
+    const K = parseInt(inputs.shift(), 10);
+    const appleLocation = inputs
+      .splice(0, K)
+      .map((value) => value.split(' ').map(Number));
+    const L = parseInt(inputs.shift(), 10);
+    const snakeLocation = inputs.map((value) =>
+      value.split(' ').map((value) => (!isNaN(value) ? Number(value) : value))
+    );
 
-    process.stdout.write(solution(N, M, numbers));
+    process.stdout.write(solution(N, K, appleLocation, L, snakeLocation));
     process.exit();
   });
 
-function solution(N, M, numbers) {
-  let arr = Array.from({ length: N }, (_, index) => index + 1);
-  let count = 0;
+function solution(N, K, appleLocation, L, snakeLocation) {
+  console.log(arguments);
+  const board = Array.from({ length: N }, () => new Array(N).fill(false));
 
-  numbers.forEach(number => {
-    const centerIndex = Math.floor(arr.length / 2);
-    const currentIndex = arr.indexOf(number);
-    const first = arr[0];
-
-    if (first === number) {
-      return arr.shift();
-    }
-
-    if (currentIndex <= centerIndex) {
-      for (let i = 0; i < currentIndex; i += 1) {
-        arr.push(arr.shift());
-        count += 1;
-      }
-      return arr.shift();
-    }
-
-    if (currentIndex > centerIndex) {
-      for (let i = 0; i < arr.length - currentIndex; i += 1) {
-        arr.unshift(arr.pop());
-        count += 1;
-      }
-    }
-    return arr.shift();
-  });
-
-  return String(count);
+  return 'hi';
 }
