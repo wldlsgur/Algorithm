@@ -1,93 +1,89 @@
-class MinHeap {
-    constructor() {
-        this.heap = [null];
-    }
+class Heap {
+  constructor() {
+    this.heap = [null];
+  }
 
-    isEmpty() {
-        return this.heap[1] ? false : true;
-    }
-
-    swap(index1, index2) {
-        const temp = this.heap[index1];
-
-        this.heap[index1] = this.heap[index2];
-        this.heap[index2] = temp;
-    }
-
-    getLeftChildIndex(index) {
-        return index * 2;
-    }
-
-    getRightChildIndex(index) {
-        return index * 2 + 1;
-    }
-
-    getParentIndex(index) {
-        return Math.floor(index / 2);
-    }
-
-    push(value) {
-        this.heap.push(value);
-
-        let currentIndex = this.heap.length - 1;
-        let parentIndex = this.getParentIndex(currentIndex);
-
-        while (parentIndex !== 0 && this.heap[parentIndex] > value) {
-            this.swap(currentIndex, parentIndex);
-
-            currentIndex = parentIndex;
-            parentIndex = this.getParentIndex(currentIndex);
-        }
-    }
-
-    pop() {
-        if (this.isEmpty()) {
-            return 0;
-        }
-
-        const result = this.heap[1];
-        const lastValue = this.heap.pop();
-
-        if (!this.isEmpty()) {
-            this.heap[1] = lastValue;
-
-            let currentIndex = 1;
-
-            while (true) {
-                const leftIndex = this.getLeftChildIndex(currentIndex);
-                const rightIndex = this.getRightChildIndex(currentIndex);
-
-                let smallerChildIndex = leftIndex;
-
-                if (
-                    this.heap[rightIndex] !== undefined &&
-                    this.heap[rightIndex] < this.heap[leftIndex]
-                ) {
-                    smallerChildIndex = rightIndex;
-                }
-
-                if (
-                    this.heap[smallerChildIndex] !== undefined &&
-                    this.heap[smallerChildIndex] < this.heap[currentIndex]
-                ) {
-                    this.swap(currentIndex, smallerChildIndex);
-                    currentIndex = smallerChildIndex;
-                } else {
-                    break;
-                }
-            }
-        }
-
-        return result;
-    }
+  getLeftIdx(idx) {
+    return idx * 2;
+  }
+  getRightIdx(idx) {
+    return idx * 2 + 1;
+  }
+  getParentIdx(idx) {
+    return Math.floor(idx / 2);
+  }
+  swap(idx1, idx2) {
+    [this.heap[idx1], this.heap[idx2]] = [this.heap[idx2], this.heap[idx1]];
+  }
+  isEmpty() {
+    return this.heap[1] ? false : true;
+  }
+  peek() {
+    return this.heap[1];
+  }
+  size() {
+    return this.heap.length - 1;
+  }
 }
 
-const minHeap = new MinHeap();
+class MinHeap extends Heap {
+  constructor() {
+    super();
+  }
 
-minHeap.push(5);
-minHeap.push(1);
-// minHeap.push(2);
+  heapifyUp() {
+    let currentIdx = this.heap.length - 1;
+    let parentIdx = this.getParentIdx(currentIdx);
 
-console.log(minHeap.heap);
-console.log(minHeap.pop());
-console.log(minHeap.heap);
+    while (parentIdx > 0 && this.heap[parentIdx] > this.heap[currentIdx]) {
+      this.swap(currentIdx, parentIdx);
+      currentIdx = parentIdx;
+      parentIdx = this.getParentIdx(currentIdx);
+    }
+  }
+  heapifyDown() {
+    let currentIdx = 1;
+
+    while (true) {
+      const leftIdx = this.getLeftIdx(currentIdx);
+      const rightIdx = this.getRightIdx(currentIdx);
+      let smallerChildIdx = leftIdx;
+
+      if (
+        this.heap[rightIdx] !== undefined &&
+        this.heap[rightIdx] < this.heap[leftIdx]
+      ) {
+        smallerChildIdx = rightIdx;
+      }
+
+      if (
+        this.heap[smallerChildIdx] !== undefined &&
+        this.heap[smallerChildIdx] < this.heap[currentIdx]
+      ) {
+        this.swap(currentIdx, smallerChildIdx);
+        currentIdx = smallerChildIdx;
+      } else {
+        break;
+      }
+    }
+  }
+  push(value) {
+    this.heap.push(value);
+    this.heapifyUp();
+  }
+  pop() {
+    if (this.isEmpty()) {
+      return null;
+    }
+
+    const result = this.heap[1];
+    const lastValue = this.heap.pop();
+
+    if (!this.isEmpty()) {
+      this.heap[1] = lastValue;
+      this.heapifyDown();
+    }
+
+    return result;
+  }
+}
