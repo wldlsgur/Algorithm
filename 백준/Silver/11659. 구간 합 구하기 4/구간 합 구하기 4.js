@@ -1,27 +1,28 @@
-const rl = require('readline').createInterface(process.stdin, process.stdout);
 const inputs = [];
 
-rl.on('line', input => {
-    inputs.push(input.trim());
-}).on('close', () => {
+require('readline')
+  .createInterface(process.stdin, process.stdout)
+  .on('line', (line) => {
+    inputs.push(line.trim());
+  })
+  .on('close', () => {
     const [N, M] = inputs.shift().split(' ').map(Number);
-    const NArray = inputs.shift().split(' ').map(Number);
-    const MArray = inputs.map(value => value.split(' ').map(Number));
+    const NCount = inputs.shift().split(' ').map(Number);
+    const location = inputs.map((row) => row.split(' ').map(Number));
 
-    solution(N, M, NArray, MArray);
-});
+    process.stdout.write(solution(N, M, NCount, location));
+    process.exit();
+  });
 
-function solution(N, M, NArray, MArray) {
-    const sumArray = new Array(N + 1).fill(0);
-    const result = [];
+function solution(N, M, NCount, location) {
+  const sumArray = new Array(N + 1).fill(0);
+  const result = [];
 
-    NArray.forEach(
-        (number, index) => (sumArray[index + 1] = sumArray[index] + number)
-    );
+  NCount.forEach(
+    (number, index) => (sumArray[index + 1] = sumArray[index] + number)
+  );
 
-    MArray.forEach(([i, j]) => {
-        result.push(sumArray[j] - sumArray[i - 1]);
-    });
-    
-    console.log(result.join('\n'));
+  location.forEach(([i, j]) => result.push(sumArray[j] - sumArray[i - 1]));
+
+  return result.join('\n');
 }
