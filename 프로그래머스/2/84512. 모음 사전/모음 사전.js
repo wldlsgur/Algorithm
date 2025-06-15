@@ -1,25 +1,28 @@
-const alphabet = ['A', 'E', 'I', 'O', 'U'];
-let count = 0;
-let flag = false;
+function solution(targetWord) {
+  const vowels = ['A', 'E', 'I', 'O', 'U'];
+  const state = { totalCount: 0, isMatched: false };
 
-function solution(word) {
-  dfs('', word);
+  function recursion(currentWord) {
+    if (currentWord === targetWord) {
+      state.isMatched = true;
+      return;
+    }
 
-  return count;
-}
+    if (currentWord.length >= 5 || state.isMatched) {
+      return;
+    }
 
-function dfs(str, word) {
-  if ((str.length > 5) | flag) {
-    return;
+    for (let i = 0; i < vowels.length; i += 1) {
+      state.totalCount += 1;
+      recursion(currentWord + vowels[i]);
+
+      if (state.isMatched) {
+        return;
+      }
+    }
   }
 
-  if (str === word) {
-    return (flag = true);
-  }
+  recursion('');
 
-  count += 1;
-
-  for (let i = 0; i < 5; i += 1) {
-    dfs(str + alphabet[i], word);
-  }
+  return state.totalCount;
 }
