@@ -6,6 +6,7 @@ function solution(n, t, m, p) {
   for (let i = 0; str.length < max; i += 1) {
     str += i.toString(n).toUpperCase();
   }
+    
   let cnt = 0;
 
   while (result.length < t) {
